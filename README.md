@@ -1,625 +1,305 @@
-# Documentazione del codice 
+# Documentazione dettagliata del codice
 
-  
+## Introduzione
+Il codice è un gioco di simulazione di guida in cui il giocatore controlla un personaggio che guida un'auto. Durante il gioco, il giocatore inserisce l'età del personaggio, il nome, il budget iniziale e la targa dell'auto. Successivamente, il giocatore può inserire i km percorsi e la velocità dell'auto, e il programma calcola il tempo totale trascorso, il consumo di carburante e fornisce informazioni sullo stato del gioco. Il gioco termina quando il giocatore inserisce 0 come km percorsi.
 
-Il codice fornito è un semplice gioco che simula un viaggio in auto. Il giocatore deve inserire l'età del personaggio, il nome, il budget iniziale e la targa dell'auto. Successivamente, il giocatore può inserire la distanza percorsa e la velocità di guida. Il programma calcola il tempo totale trascorso, il consumo di carburante e il numero di stazioni di servizio visitate. Il gioco termina quando il giocatore decide di smettere o se il serbatoio dell'auto è vuoto. 
+## Strutture dati
+Il codice utilizza due strutture dati: `Personaggio` e `Auto`. La struttura `Personaggio` contiene i seguenti campi:
+- `eta` (int): rappresenta l'età del personaggio.
+- `nome` (string): rappresenta il nome del personaggio.
+- `soldi` (double): rappresenta il budget del giocatore.
+- `modalitaGuida` (string): rappresenta la modalità di guida del personaggio.
 
-  
+La struttura `Auto` contiene i seguenti campi:
+- `targa` (string): rappresenta la targa dell'auto.
+- `serbatoio` (double): rappresenta il livello di carburante nel serbatoio dell'auto.
 
-## Librerie utilizzate 
+## Funzione `controllaMulta`
+La funzione `controllaMulta` viene utilizzata per controllare se il giocatore riceve una multa per eccesso di velocità. Prende in input la velocità attuale dell'auto e un riferimento al personaggio giocatore. Se la velocità supera i 130 km/h con una probabilità del 20%, viene calcolato l'importo della multa (10€ per ogni km/h oltre il limite) e sottratto dal budget del giocatore.
 
-  
+**Esempio:**
+```cpp
+void controllaMulta(double velocita, Personaggio& giocatore) {
+    if (velocita > 130.0 && rand() % 100 < 20) {  // 20% di probabilità di multa
+        double importoMulta = (velocita - 130.0) * 10.0;  // Multa di 10€ per km/h oltre il limite
+        cout << "Hai superato il limite di velocità! Ricevi una multa di " << importoMulta << "€.\n";
+        giocatore.soldi -= importoMulta;
+    }
+}
+```
 
-Il programma utilizza le seguenti librerie: 
+Se la velocità inserita è 140 km/h e si verifica la probabilità del 20% di multa, verrà stampato il seguente messaggio:
+```
+Hai superato il limite di velocità! Ricevi una multa di 100€.
+```
 
-  
+## Funzione `main`
+La funzione `main` è la funzione principale del programma, che avvia il gioco e gestisce l'interazione con il giocatore. Di seguito è riportata una descrizione passo-passo delle operazioni svolte nella funzione:
 
-```cpp 
+1. Vengono dichiarate le variabili locali `giocatore` di tipo `Personaggio` e `autoGiocatore` di tipo `Auto`, che rappresentano il personaggio controll
 
-#include <iostream> 
+ato dal giocatore e l'auto del giocatore, rispettivamente.
 
-#include <string> 
+2. Vengono richiesti all'utente i dati del personaggio: l'età, il nome e il budget iniziale. Questi dati vengono memorizzati all'interno della struttura `giocatore`.
 
-#include <ctime> 
+**Esempio:**
+```cpp
+cout << "Inserisci l'età del personaggio: ";
+cin >> giocatore.eta;
 
-#include <cstdlib> 
+cout << "Inserisci il nome del personaggio: ";
+cin >> giocatore.nome;
 
-``` 
+cout << "Inserisci il budget iniziale del giocatore: ";
+cin >> giocatore.soldi;
+```
 
-  
+Se l'età del personaggio è inferiore a 16 anni, verrà stampato il seguente messaggio:
+```
+Spiacenti, devi avere almeno 16 anni per giocare!
+```
 
-- `iostream` viene utilizzata per consentire l'input/output da tastiera. 
+3. Viene richiesta all'utente la targa dell'auto e viene memorizzata all'interno della struttura `autoGiocatore`.
 
-- `string` viene utilizzata per gestire le stringhe di testo. 
+**Esempio:**
+```cpp
+cout << "Inserisci la targa dell'auto: ";
+cin >> autoGiocatore.targa;
+```
 
-- `ctime` e `cstdlib` vengono utilizzate per generare numeri casuali. 
+4. Il serbatoio dell'auto viene inizializzato a 60 litri.
 
-  
+```cpp
+autoGiocatore.serbatoio = 60.0;
+```
 
-## Struct 
+5. Viene inizializzato il generatore di numeri casuali utilizzando il valore corrente del tempo come seme.
 
-  
+```cpp
+srand(static_cast<unsigned>(time(0)));
+```
 
-Il codice definisce due struct: `Personaggio` e `Auto`. 
+6. Viene generata casualmente una velocità efficiente compresa tra 80 e 110 km/h.
 
-  
-
-```cpp 
-
-struct Personaggio { 
-
-    int eta; 
-
-    string nome; 
-
-    double soldi; 
-
-    string modalitaGuida; 
-
-}; 
-
-  
-
-struct Auto { 
-
-    string targa; 
-
-    double serbatoio; 
-
-}; 
-
-``` 
-
-  
-
-- `Personaggio` rappresenta un personaggio del gioco e contiene i seguenti membri: 
-
-  - `eta` (intero): l'età del personaggio. 
-
-  - `nome` (stringa): il nome del personaggio. 
-
-  - `soldi` (numero in virgola mobile): il budget iniziale del giocatore. 
-
-  - `modalitaGuida` (stringa): la modalità di guida del personaggio. 
-
-   
-
-- `Auto` rappresenta l'auto del giocatore e contiene i seguenti membri: 
-
-  - `targa` (stringa): la targa dell'auto. 
-
-  - `serbatoio` (numero in virgola mobile): la quantità di carburante nel serbatoio dell'auto. 
-
-  
-
-## Funzione `main` 
-
-  
-
-La funzione `main` è il punto di ingresso del programma. 
-
-  
-
-```cpp 
-
-int main() { 
-
-    // ... 
-
-} 
-
-``` 
-
-  
-
-### Dichiarazione delle variabili 
-
-  
-
-All'interno della funzione `main`, vengono dichiarate le seguenti variabili: 
-
-  
-
-```cpp 
-
-Personaggio giocatore; 
-
-Auto autoGiocatore; 
-
-double kmPercorsi = 0.0; 
-
-double tempoTotale = 0.0; 
-
-double costoCarburante = 0.0; 
-
-double prezzoCarburante = 0.0; 
-
-int contatoreStazioni = 0; 
-
-``` 
-
-  
-
-- `giocatore` (di tipo `Personaggio`): rappresenta il personaggio del giocatore. 
-
-- `autoGiocatore` (di tipo `Auto`): rappresenta l'auto del giocatore. 
-
-- `kmPercorsi` (numero in virgola mobile): tiene traccia dei chilometri totali percorsi. 
-
-- `tempoTotale` (numero in virgola mobile): tiene traccia del tempo totale trascorso. 
-
-- `costoCarburante` (numero in virgola mobile): tiene traccia del costo totale del carburante. 
-
-- `prezzoCarburante` (numero in virgola mobile): indica il prezzo del carburante alla 
-
-  
-
-stazione di servizio. 
-
-- `contatoreStazioni` (intero): tiene traccia del numero di stazioni di servizio visitate. 
-
-  
-
-### Input dei dati del giocatore 
-
-  
-
-```cpp 
-
-cout << "Inserisci l'età del personaggio: "; 
-
-cin >> giocatore.eta; 
-
-``` 
-
-  
-
-La riga di codice sopra richiede all'utente di inserire l'età del personaggio e memorizza il valore nella variabile `giocatore.eta`. 
-
-  
-
-Successivamente, viene eseguito un controllo per verificare se l'età del giocatore è inferiore a 18. In tal caso, il programma mostra un messaggio di errore e termina il gioco. 
-
-  
-
-```cpp 
-
-if (giocatore.eta < 18) { 
-
-    cout << "Spiacenti, devi avere almeno 18 anni per giocare!"; 
-
-    return 0; 
-
-} 
-
-``` 
-
-  
-
-```cpp 
-
-cout << "Inserisci il nome del personaggio: "; 
-
-cin >> giocatore.nome; 
-
-``` 
-
-  
-
-La riga di codice sopra richiede all'utente di inserire il nome del personaggio e memorizza il valore nella variabile `giocatore.nome`. 
-
-  
-
-```cpp 
-
-cout << "Inserisci il budget iniziale del giocatore: "; 
-
-cin >> giocatore.soldi; 
-
-``` 
-
-  
-
-La riga di codice sopra richiede all'utente di inserire il budget iniziale del giocatore e memorizza il valore nella variabile `giocatore.soldi`. 
-
-  
-
-```cpp 
-
-cout << "Inserisci la targa dell'auto: "; 
-
-cin >> autoGiocatore.targa; 
-
-``` 
-
-  
-
-La riga di codice sopra richiede all'utente di inserire la targa dell'auto e memorizza il valore nella variabile `autoGiocatore.targa`. 
-
-  
-
-### Inizializzazione delle variabili 
-
-  
-
-```cpp 
-
-autoGiocatore.serbatoio = 60.0; 
-
-``` 
-
-  
-
-La riga di codice sopra inizializza la variabile `autoGiocatore.serbatoio` con il valore 60.0, che rappresenta la capacità massima del serbatoio dell'auto. 
-
-  
-
-```cpp 
-
-srand(static_cast<unsigned>(time(0))); 
-
-double velocitaEfficiente = (static_cast<double>(rand()) / RAND_MAX) * (110.0 - 80.0) + 80.0; 
-
-``` 
-
-  
-
-La riga di codice sopra inizializza la variabile `velocitaEfficiente` con una velocità casuale compresa tra 80.0 e 110.0. La funzione `srand` inizializza il generatore di numeri casuali, mentre `rand()` restituisce un numero casuale tra 0 e `RAND_MAX`. La velocità efficiente viene calcolata mappando il valore restituito dalla funzione `rand()` nell'intervallo desiderato. 
-
-  
-
-### Ciclo principale del gioco 
-
-  
-
-```cpp 
-
-cout << "Inizia il gioco!\n"; 
-
-  
-
-while (true) { 
-
-    // ... 
-
-} 
-
-``` 
-
-  
-
-Il ciclo `while (true)` rappresenta il ciclo principale del gioco, che viene eseguito finché non viene interrotto con un'istruzione `break`. 
-
-  
-
-### Input dei dati di viaggio 
-
-  
-
-All'interno del ciclo principale del gioco, il programma richiede i dati relativi al viaggio al giocatore. 
-
-  
-
-```cpp 
-
-double kmTrascorsi; 
-
-double velocita; 
-
-  
-
-cout << "Inserisci i km trasc 
-
-  
-
-orsi (0 per uscire): "; 
-
-cin >> kmTrascorsi; 
-
-``` 
-
-  
-
-Le righe di codice sopra richiedono all'utente di inserire i chilometri trascorsi durante il viaggio e memorizzano il valore nella variabile `kmTrascorsi`. 
-
-  
-
-Se il valore inserito è 0, il gioco termina con l'istruzione `break`. 
-
-  
-
-```cpp 
-
-if (kmTrascorsi == 0) { 
-
-    break; 
-
-} 
-
-``` 
-
-  
-
-```cpp 
-
-cout << "Inserisci la velocità (km/h): "; 
-
-cin >> velocita; 
-
-``` 
-
-  
-
-La riga di codice sopra richiede all'utente di inserire la velocità di guida durante il viaggio e memorizza il valore nella variabile `velocita`. 
-
-  
-
-### Calcolo dei tempi e delle modalità di guida 
-
-  
-
-```cpp 
-
-tempoTotale += kmTrascorsi / velocita; 
-
-``` 
-
-  
-
-La riga di codice sopra calcola il tempo trascorso durante il viaggio aggiungendo il rapporto tra i chilometri trascorsi (`kmTrascorsi`) e la velocità di guida (`velocita`) alla variabile `tempoTotale`. 
-
-  
-
-```cpp 
-
-if (giocatore.eta < 18) { 
-
-    giocatore.modalitaGuida = "calma"; 
-
-} 
-
-else { 
-
-    cout << "Inserisci la modalità di guida (calma, normale, aggressiva): "; 
-
-    cin >> giocatore.modalitaGuida; 
-
-} 
-
-``` 
-
-  
-
-Se l'età del giocatore è inferiore a 18, viene assegnata automaticamente la modalità di guida "calma" alla variabile `giocatore.modalitaGuida`. Altrimenti, viene richiesto all'utente di inserire la modalità di guida desiderata, che viene memorizzata nella stessa variabile. 
-
-  
-
-### Calcolo del consumo di carburante 
-
-  
-
-```cpp 
-
-double consumoBase; 
-
-if (giocatore.modalitaGuida == "calma") { 
-
-    consumoBase = 3.0; 
-
-} 
-
-else if (giocatore.modalitaGuida == "normale") { 
-
-    consumoBase = 4.5; 
-
-} 
-
-else { 
-
-    consumoBase = 5.0; 
-
-} 
-
-``` 
-
-  
-
-Le righe di codice sopra determinano il consumo di carburante base (`consumoBase`) in base alla modalità di guida scelta. Se la modalità di guida è "calma", il consumo base è 3.0 litri per 100 chilometri. Se la modalità di guida è "normale", il consumo base è 4.5 litri per 100 chilometri. Altrimenti, se la modalità di guida è "aggressiva", il consumo base è 5.0 litri per 100 chilometri. 
-
-  
-
-```cpp 
-
-double differenzaVelocita = abs(velocita - velocitaEfficiente); 
-
-double consumoCarburante; 
-
-if (differenzaVelocita <= 20.0) { 
-
-    consumoCarburante = kmTrascorsi * ((consumoBase - 1.5 * (1 - differenzaVelocita / 20.0)) / 100.0); 
-
-} 
-
-else { 
-
-    consumoCarburante = kmTrascorsi * (consumoBase / 100.0); 
-
-} 
-
-``` 
-
-  
-
-Le righe di codice sopra calcolano il consumo di carburante (`consumoCarburante`) in base alla differenza tra la velocità di guida sc 
-
-  
-
-elta (`velocita`) e la velocità efficiente (`velocitaEfficiente`). Se la differenza di velocità è inferiore o uguale a 20.0, viene utilizzata un'equazione lineare per calcolare il consumo di carburante in base alla differenza di velocità. Altrimenti, viene utilizzato il consumo base senza alcuna penalità. 
-
-  
-
-### Aggiornamento del serbatoio dell'auto 
-
-  
-
-```cpp 
-
-autoGiocatore.serbatoio -= consumoCarburante; 
-
-if (autoGiocatore.serbatoio < 0) { 
-
-    cout << "Carburante insufficiente per completare il percorso.\n"; 
-
-    break; 
-
-} 
-
-``` 
-
-  
-
-Le righe di codice sopra sottraggono il consumo di carburante (`consumoCarburante`) dal serbatoio dell'auto (`autoGiocatore.serbatoio`). Se il serbatoio diventa inferiore a 0, viene visualizzato un messaggio di errore e il gioco termina con un'istruzione `break`. 
-
-  
-
-### Aggiornamento dei dati e stazione di servizio 
-
-  
-
-```cpp 
-
-kmPercorsi += kmTrascorsi; 
-
-``` 
-
-  
-
-La riga di codice sopra aggiorna i chilometri totali percorsi (`kmPercorsi`) aggiungendo i chilometri trascorsi durante il viaggio (`kmTrascorsi`). 
-
-  
-
-```cpp 
-
-contatoreStazioni++; 
-
-if (contatoreStazioni % 3 == 0 && rand() % 2 == 0) { 
-
-    prezzoCarburante = (static_cast<double>(rand()) / RAND_MAX) * (2.50 - 0.98) + 0.98; 
-
-    cout << "Sei arrivato a una stazione di servizio. Il prezzo del carburante è di " << prezzoCarburante << "€ al litro.\n"; 
-
-    cout << "Vuoi fare rifornimento? (e per sì, x per no): "; 
-
-    char risposta; 
-
-    cin >> risposta; 
-
-    if (risposta == 'e') { 
-
-        double litriDaAggiungere; 
-
-        cout << "Quanti litri di carburante vuoi aggiungere? "; 
-
-        cin >> litriDaAggiungere; 
-
-        if (litriDaAggiungere > 60.0 - autoGiocatore.serbatoio) { 
-
-            cout << "Non puoi aggiungere più di " << 60.0 - autoGiocatore.serbatoio << " litri.\n"; 
-
-            continue; 
-
-        } 
-
-        double costo = litriDaAggiungere * prezzoCarburante; 
-
-        if (costo > giocatore.soldi) { 
-
-            cout << "Non hai abbastanza soldi per fare rifornimento!\n"; 
-
-            continue; 
-
-        } 
-
-        giocatore.soldi -= costo; 
-
-        autoGiocatore.serbatoio += litriDaAggiungere; 
-
-    } 
-
-} 
-
-``` 
-
-  
-
-Le righe di codice sopra gestiscono la stazione di servizio. Ogni volta che il contatore delle stazioni (`contatoreStazioni`) raggiunge un multiplo di 3 e viene generato un numero casuale pari a 0, il giocatore arriva a una stazione di servizio. 
-
-  
-
-Viene generato un prezzo casuale del carburante tra 0.98 €/litro e 2.50 €/litro. Successivamente, viene chiesto al giocatore se des 
-
-  
-
-idera fare il rifornimento. Se la risposta è 'e', viene richiesto al giocatore di inserire la quantità di litri di carburante da aggiungere (`litriDaAggiungere`). 
-
-  
-
-Vengono effettuati alcuni controlli, come ad esempio verificare se la quantità di carburante da aggiungere supera la capacità rimanente del serbatoio (`60.0 - autoGiocatore.serbatoio`) o se il costo del carburante è superiore al budget del giocatore (`giocatore.soldi`). 
-
-  
-
-Se tutti i controlli sono superati, il costo del carburante viene calcolato e sottratto dal budget del giocatore (`giocatore.soldi`), mentre la quantità di carburante viene aggiunta al serbatoio dell'auto (`autoGiocatore.serbatoio`). 
-
-  
-
-### Output dei risultati parziali 
-
-  
-
-```cpp 
-
-cout << "Hai percorso " << kmPercorsi << " km.\n"; 
-
-cout << "Serbatoio rimanente: " << autoGiocatore.serbatoio << " litri\n"; 
-
-cout << "Budget rimanente: " << giocatore.soldi << "€.\n"; 
-
-cout << "Tempo totale trascorso: " << tempoTotale << " ore.\n"; 
-
-``` 
-
-  
-
-Le righe di codice sopra mostrano i risultati parziali del gioco, inclusi i chilometri percorsi (`kmPercorsi`), la quantità di carburante rimanente nel serbatoio dell'auto (`autoGiocatore.serbatoio`), il budget rimanente del giocatore (`giocatore.soldi`) e il tempo totale trascorso (`tempoTotale`). 
-
-  
-
-### Fine del gioco e output finale 
-
-  
-
-```cpp 
-
-cout << "Fine del gioco. Risultati:\n"; 
-
-cout << "Km percorsi: " << kmPercorsi << " km.\n"; 
-
-cout << "Budget rimanente: " << giocatore.soldi << "€.\n"; 
-
-cout << "Serbatoio rimanente: " << autoGiocatore.serbatoio << " litri\n"; 
-
-cout << "Tempo totale trascorso: " << tempoTotale << " ore.\n"; 
-
-  
-
-return 0; 
-
-``` 
-
-  
-
-Le righe di codice sopra segnalano la fine del gioco e mostrano i risultati finali del gioco, inclusi i chilometri percorsi, il budget rimanente del giocatore, la quantità di carburante rimanente nel serbatoio dell'auto e il tempo totale trascorso. 
-
-  
-
-Infine, la funzione `main` restituisce 0, indicando il termine del programma. 
+```cpp
+double velocitaEfficiente = (static_cast<double>(rand()) / RAND_MAX) * (110.0 - 80.0) + 80.0;
+```
+
+Se la velocità efficiente generata è 95 km/h.
+
+7. Vengono dichiarate le variabili `kmPercorsi`, `tempoTotale`, `costoCarburante`, `prezzoCarburante` e `contatoreStazioni` per tenere traccia delle statistiche del gioco.
+
+```cpp
+double kmPercorsi = 0.0;
+double tempoTotale = 0.0;
+double costoCarburante = 0.0;
+double prezzoCarburante = 0.0;
+int contatoreStazioni = 0;
+```
+
+8. Viene stampato il messaggio di inizio gioco.
+
+```cpp
+cout << "Inizia il gioco!\n";
+```
+
+9. Viene avviato un ciclo `while (true)` che continua finché non viene inserito 0 come km percorsi.
+
+```cpp
+while (true) {
+    // ...
+}
+```
+
+10. All'interno del ciclo, vengono richiesti all'utente i km percorsi e la velocità dell'auto.
+
+```cpp
+double kmTrascorsi;
+double velocita;
+cout << "Inserisci i km trascorsi (0 per uscire): ";
+cin >> kmTrascorsi;
+
+if (kmTrascorsi == 0) {
+    break;
+}
+
+cout << "Inserisci la velocità (km/h): ";
+cin >> velocita;
+```
+
+**Esempio:**
+```
+Inserisci i km trascorsi (0 per uscire): 50
+Inserisci la velocità (km/h): 100
+```
+
+11. Viene chiamata la funzione `
+
+controllaMulta` per verificare se il giocatore riceve una multa per eccesso di velocità.
+
+```cpp
+controllaMulta(velocita, giocatore);
+```
+
+**Esempio:**
+Se la velocità inserita è 140 km/h e si verifica la probabilità del 20% di multa, verrà stampato il seguente messaggio:
+```
+Hai superato il limite di velocità! Ricevi una multa di 100€.
+```
+
+12. Viene calcolato il tempo totale trascorso aggiungendo il tempo necessario per percorrere la distanza inserita.
+
+```cpp
+tempoTotale += kmTrascorsi / velocita;
+```
+
+**Esempio:**
+Se i km trascorsi sono 50 e la velocità è 100 km/h, il tempo totale trascorso sarà 0.5 ore.
+
+13. Viene determinata la modalità di guida in base all'età del giocatore.
+
+```cpp
+if (giocatore.eta < 18) {
+    giocatore.modalitaGuida = "calma";
+}
+else {
+    cout << "Inserisci la modalità di guida (calma, normale, aggressiva): ";
+    cin >> giocatore.modalitaGuida;
+}
+```
+
+**Esempio:**
+Se l'età del giocatore è inferiore a 18 anni, la modalità di guida sarà impostata su "calma".
+
+14. Viene calcolato il consumo di carburante in base alla modalità di guida e alla differenza di velocità rispetto alla velocità efficiente.
+
+```cpp
+double consumoBase;
+if (giocatore.modalitaGuida == "calma") {
+    consumoBase = 3.0;
+}
+else if (giocatore.modalitaGuida == "normale") {
+    consumoBase = 4.5;
+}
+else {
+    consumoBase = 5.0;
+}
+double differenzaVelocita = abs(velocita - velocitaEfficiente);
+double consumoCarburante;
+if (differenzaVelocita <= 20.0) {
+    consumoCarburante = kmTrascorsi * ((consumoBase - 1.5 * (1 - differenzaVelocita / 20.0)) / 100.0);
+}
+else {
+    consumoCarburante = kmTrascorsi * (consumoBase / 100.0);
+}
+```
+
+**Esempio:**
+Se la modalità di guida è "calma" e la differenza di velocità rispetto alla velocità efficiente è 10 km/h, il consumo di carburante sarà 1.5 litri.
+
+15. Viene sottratto il consumo di carburante dal serbatoio dell'auto. Se il serbatoio diventa negativo, viene stampato un messaggio di carburante insufficiente e si esce dal ciclo.
+
+```cpp
+autoGiocatore.serbatoio -= consumoCarburante;
+if (autoGiocatore.serbatoio < 0) {
+    cout << "Carburante insufficiente per completare il percorso.\n";
+    break;
+}
+```
+
+**Esempio:**
+Se il consumo di carburante è 1.5 litri e il serbatoio dell'auto contiene 2 litri di carburante, il serbatoio rimanente sarà 0.5 litri.
+
+16. Vengono aggiornati i
+
+ km percorsi.
+
+```cpp
+kmPercorsi += kmTrascorsi;
+```
+
+**Esempio:**
+Se i km trascorsi sono 50, dopo il primo turno i km percorsi saranno 50.
+
+17. Viene controllato se il giocatore si trova ad una stazione di servizio. Ogni 3 stazioni, con una probabilità del 50%, viene generato casualmente un prezzo per il carburante e viene chiesto al giocatore se desidera fare rifornimento. Se il giocatore accetta, viene richiesto il numero di litri di carburante da aggiungere. Viene effettuato un controllo sulla disponibilità di carburante nel serbatoio e sulla disponibilità di budget del giocatore. Se tutti i controlli passano, viene aggiunto il carburante al serbatoio e sottratto il costo dal budget del giocatore.
+
+```cpp
+contatoreStazioni++;
+if (contatoreStazioni % 3 == 0 && rand() % 2 == 0) {
+    prezzoCarburante = (static_cast<double>(rand()) / RAND_MAX) * (2.50 - 0.98) + 0.98;
+    cout << "Sei arrivato a una stazione di servizio. Il prezzo del carburante è di " << prezzoCarburante << "€ al litro.\n";
+    cout << "Vuoi fare rifornimento? (e per sì, x per no): ";
+    char risposta;
+    cin >> risposta;
+    if (risposta == 'e') {
+        double litriDaAggiungere;
+        cout << "Quanti litri di carburante vuoi aggiungere? ";
+        cin >> litriDaAggiungere;
+        if (litriDaAggiungere > 60.0 - autoGiocatore.serbatoio) {
+            cout << "Non puoi aggiungere più di " << 60.0 - autoGiocatore.serbatoio << " litri.\n";
+            continue;
+        }
+        double costo = litriDaAggiungere * prezzoCarburante;
+        if (costo > giocatore.soldi) {
+            cout << "Non hai abbastanza soldi per fare rifornimento!\n";
+            continue;
+        }
+        giocatore.soldi -= costo;
+        autoGiocatore.serbatoio += litriDaAggiungere;
+    }
+}
+```
+
+**Esempio:**
+Se il giocatore si trova alla terza stazione di servizio e viene generato un prezzo di carburante di 1.5€ al litro, verrà stampato il seguente messaggio:
+```
+Sei arrivato a una stazione di servizio. Il prezzo del carburante è di 1.5€ al litro.
+Vuoi fare rifornimento? (e per sì, x per no):
+```
+Se il giocatore sceglie di fare rifornimento e inserisce 30 litri di carburante, verrà calcolato il costo del carburante (30 litri * 1.5€/litro) e sottratto dal budget del giocatore. Inoltre, verranno aggiunti 30 litri al serbatoio dell'auto.
+
+18. Vengono stampate le informazioni sullo stato del gioco, come i km percorsi, il livello del serbatoio
+
+, il budget rimanente e il tempo totale trascorso.
+
+```cpp
+cout << "Hai percorso " << kmPercorsi << " km.\n";
+cout << "Serbatoio rimanente: " << autoGiocatore.serbatoio << " litri\n";
+cout << "Budget rimanente: " << giocatore.soldi << "€.\n";
+cout << "Tempo totale trascorso: " << tempoTotale << " ore.\n";
+cout << endl;  // Separa i turni con una linea vuota
+```
+
+**Esempio:**
+```
+Hai percorso 50 km.
+Serbatoio rimanente: 0.5 litri
+Budget rimanente: 400€.
+Tempo totale trascorso: 0.5 ore.
+```
+
+19. Si ripete il ciclo finché non viene inserito 0 come km percorsi.
+
+20. Alla fine del gioco, vengono stampati i risultati finali, tra cui i km percorsi, il budget rimanente, il livello del serbatoio e il tempo totale trascorso.
+
+```cpp
+cout << "Fine del gioco. Risultati:\n";
+cout << "Km percorsi: " << kmPercorsi << " km.\n";
+cout << "Budget rimanente: " << giocatore.soldi << "€.\n";
+cout << "Serbatoio rimanente: " << autoGiocatore.serbatoio << " litri\n";
+cout << "Tempo totale trascorso: " << tempoTotale << " ore.\n";
+```
+
+**Esempio:**
+```
+Fine del gioco. Risultati:
+Km percorsi: 200 km.
+Budget rimanente: 400€.
+Serbatoio rimanente: 10 litri.
+Tempo totale trascorso: 2.0 ore.
+```
+
+21. Il programma termina restituendo 0.
+
+## Conclusioni
+Il codice implementa un semplice gioco di simulazione di guida in cui il giocatore controlla un personaggio che guida un'auto. Attraverso l'interazione con l'utente, il programma calcola statistiche come i km percorsi, il consumo di carburante e il tempo totale trascorso. La documentazione dettagliata del codice fornisce una spiegazione esaustiva delle diverse parti del programma e delle loro funzionalità, inclusi gli esempi che illustrano l'interazione con l'utente e i risultati ottenuti durante il gioco.
